@@ -40,7 +40,6 @@ class WatchCommand extends BuildRunnerCommand {
       verbose: options.verbose,
       builderConfigOverrides: options.builderConfigOverrides,
       isReleaseBuild: options.isReleaseBuild,
-      buildDirs: options.buildDirs,
       logPerformanceDir: options.logPerformanceDir,
     );
     if (handler == null) return ExitCode.config.code;

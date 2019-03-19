@@ -85,6 +85,7 @@ class TestCommand extends BuildRunnerCommand {
     try {
       _ensureBuildTestDependency(packageGraph);
       options = readOptions();
+      // TODO(grouma)
       var outputMap = (options.outputMap ?? {})..addAll({tempPath: null});
       var result = await build(
         builderApplications,
@@ -99,7 +100,6 @@ class TestCommand extends BuildRunnerCommand {
         verbose: options.verbose,
         builderConfigOverrides: options.builderConfigOverrides,
         isReleaseBuild: options.isReleaseBuild,
-        buildDirs: options.buildDirs,
         logPerformanceDir: options.logPerformanceDir,
       );
 

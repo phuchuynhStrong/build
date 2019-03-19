@@ -44,13 +44,12 @@ Future<ServeHandler> watch(
   bool skipBuildScriptCheck,
   bool enableLowResourcesMode,
   Map<String, BuildConfig> overrideBuildConfig,
-  Map<String, String> outputMap,
+  Map<String, List<String>> outputMap,
   bool outputSymlinksOnly,
   bool trackPerformance,
   bool verbose,
   Map<String, Map<String, dynamic>> builderConfigOverrides,
   bool isReleaseBuild,
-  List<String> buildDirs,
   String logPerformanceDir,
 }) async {
   builderConfigOverrides ??= const {};
@@ -58,9 +57,7 @@ Future<ServeHandler> watch(
 
   var environment = OverrideableEnvironment(
       IOEnvironment(packageGraph,
-          assumeTty: assumeTty,
-          outputMap: outputMap,
-          outputSymlinksOnly: outputSymlinksOnly),
+          assumeTty: assumeTty, outputSymlinksOnly: outputSymlinksOnly),
       reader: reader,
       writer: writer,
       onLog: onLog ?? stdIOLogListener(assumeTty: assumeTty, verbose: verbose));
@@ -90,8 +87,8 @@ Future<ServeHandler> watch(
       terminator.shouldTerminate,
       directoryWatcherFactory,
       configKey,
-      outputMap?.isNotEmpty == true,
-      buildDirs,
+      outputMap.keys.any((input) => outputMap[input].isNotEmpty),
+      outputMap,
       isReleaseMode: isReleaseBuild ?? false);
 
   unawaited(watch.buildResults.drain().then((_) async {
@@ -119,10 +116,10 @@ WatchImpl _runWatch(
         DirectoryWatcher Function(String) directoryWatcherFactory,
         String configKey,
         bool willCreateOutputDirs,
-        List<String> buildDirs,
+        Map<String, List<String>> outputMap,
         {bool isReleaseMode = false}) =>
     WatchImpl(options, environment, builders, builderConfigOverrides, until,
-        directoryWatcherFactory, configKey, willCreateOutputDirs, buildDirs,
+        directoryWatcherFactory, configKey, willCreateOutputDirs, outputMap,
         isReleaseMode: isReleaseMode);
 
 class WatchImpl implements BuildState {
@@ -153,7 +150,7 @@ class WatchImpl implements BuildState {
   final PackageGraph packageGraph;
 
   /// The directories to build upon file changes.
-  final List<String> _buildDirs;
+  final Map<String, List<String>> _outputMap;
 
   @override
   Future<BuildResult> currentBuild;
@@ -173,7 +170,7 @@ class WatchImpl implements BuildState {
       this._directoryWatcherFactory,
       this._configKey,
       this._willCreateOutputDirs,
-      this._buildDirs,
+      this._outputMap,
       {bool isReleaseMode = false})
       : _debounceDelay = options.debounceDelay,
         packageGraph = options.packageGraph {
@@ -219,7 +216,7 @@ class WatchImpl implements BuildState {
               failureType: FailureType.buildScriptChanged);
         }
       }
-      return _build.run(mergedChanges, buildDirs: _buildDirs);
+      return _build.run(mergedChanges, outputMap: _outputMap);
     }
 
     var terminate = Future.any([until, _terminateCompleter.future]).then((_) {
@@ -309,7 +306,7 @@ class WatchImpl implements BuildState {
             options, watcherEnvironment, builders, builderConfigOverrides,
             isReleaseBuild: isReleaseMode);
 
-        firstBuild = await _build.run({}, buildDirs: _buildDirs);
+        firstBuild = await _build.run({}, outputMap: _outputMap);
       } on CannotBuildException {
         _terminateCompleter.complete();
 

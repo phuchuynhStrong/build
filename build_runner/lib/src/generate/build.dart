@@ -64,14 +64,13 @@ Future<BuildResult> build(List<BuilderApplication> builders,
     onLog(LogRecord record),
     Stream terminateEventStream,
     bool enableLowResourcesMode,
-    Map<String, String> outputMap,
+    Map<String, List<String>> outputMap,
     bool outputSymlinksOnly,
     bool trackPerformance,
     bool skipBuildScriptCheck,
     bool verbose,
     bool isReleaseBuild,
     Map<String, Map<String, dynamic>> builderConfigOverrides,
-    List<String> buildDirs,
     String logPerformanceDir}) async {
   builderConfigOverrides ??= const {};
   packageGraph ??= PackageGraph.forThisPackage();
@@ -79,7 +78,6 @@ Future<BuildResult> build(List<BuilderApplication> builders,
       IOEnvironment(
         packageGraph,
         assumeTty: assumeTty,
-        outputMap: outputMap,
         outputSymlinksOnly: outputSymlinksOnly,
       ),
       reader: reader,
@@ -108,7 +106,7 @@ Future<BuildResult> build(List<BuilderApplication> builders,
       builderConfigOverrides,
       isReleaseBuild: isReleaseBuild ?? false,
     );
-    var result = await build.run({}, buildDirs: buildDirs);
+    var result = await build.run({}, outputMap: outputMap);
     await build?.beforeExit();
     return result;
   } finally {
@@ -155,14 +153,13 @@ Future<ServeHandler> watch(List<BuilderApplication> builders,
         DirectoryWatcher Function(String) directoryWatcherFactory,
         Stream terminateEventStream,
         bool enableLowResourcesMode,
-        Map<String, String> outputMap,
+        Map<String, List<String>> outputMap,
         bool outputSymlinksOnly,
         bool trackPerformance,
         bool skipBuildScriptCheck,
         bool verbose,
         bool isReleaseBuild,
         Map<String, Map<String, dynamic>> builderConfigOverrides,
-        List<String> buildDirs,
         String logPerformanceDir}) =>
     watch_impl.watch(
       builders,
@@ -186,6 +183,5 @@ Future<ServeHandler> watch(List<BuilderApplication> builders,
       verbose: verbose,
       builderConfigOverrides: builderConfigOverrides,
       isReleaseBuild: isReleaseBuild,
-      buildDirs: buildDirs,
       logPerformanceDir: logPerformanceDir,
     );
