@@ -62,7 +62,7 @@ line 6, column 9 of build.yaml: Unsupported value for "generate_for". Include gl
 
 void _expectThrows(String buildYaml, matcher) => expect(
     () => BuildConfig.parse('package_name', [], buildYaml,
-        configYamlSourceUrl: 'build.yaml'),
+        configYamlPath: 'build.yaml'),
     _throwsError(matcher));
 
 Matcher _throwsError(matcher) => throwsA(

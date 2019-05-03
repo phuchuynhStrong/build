@@ -46,7 +46,7 @@ class BuildConfig {
         packageName,
         dependencies,
         await file.readAsString(),
-        configYamlSourceUrl: file.path,
+        configYamlPath: file.path,
       );
     } else {
       return BuildConfig.useDefault(packageName, dependencies);

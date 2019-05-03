@@ -26,7 +26,7 @@ Future<Map<String, BuildConfig>> findBuildConfigOverrides(
         packageName,
         packageNode.dependencies.map((n) => n.name),
         yaml,
-        configYamlSourceUrl: file.path,
+        configYamlPath: file.path,
       );
       configs[packageName] = config;
     }
@@ -42,7 +42,7 @@ Future<Map<String, BuildConfig>> findBuildConfigOverrides(
       packageGraph.root.name,
       packageGraph.root.dependencies.map((n) => n.name),
       yaml,
-      configYamlSourceUrl: file.path,
+      configYamlPath: file.path,
     );
     configs[packageGraph.root.name] = config;
   }

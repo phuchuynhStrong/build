@@ -1,3 +1,7 @@
+## 1.4.1
+
+- Updated `package:build_config` dependency to `>=0.4.1 <0.4.2`.
+
 ## 1.4.0
 
 - Add a `run` command to execute VM entrypoints with generated sources.
