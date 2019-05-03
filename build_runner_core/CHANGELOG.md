@@ -1,6 +1,7 @@
 ## 3.0.5
 
 - Explicitly require Dart SDK `>=2.2.0 <3.0.0`.
+- Updated `package:build_config` dependency to `>=0.4.0 <0.4.2`.
 
 ## 3.0.4
 
